@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+    <title>Random Joke Getter!</title>
+    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css" />
+    <script type='text/javascript' src='config.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue@latest/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
+	<style>
+		/* .myheader grabbed from Bootstrap's jumbotron example - https://getbootstrap.com/docs/4.0/examples/jumbotron/ */
+		.myheader{
+			background-color: #e9ecef;
+			padding: 4rem 2rem;
+			margin-bottom:2rem;
+		}
+		
+		input.form-control{
+			display: inline-block;
+			width: 20rem;
+			margin-right:1rem;
+		}
+		.search-row{
+			margin-bottom:1rem;
+		}
+	</style>
+</head>
+<body>
+        <div id="app">
+            <div class="myheader">
+                <h1 class="display-5">{{ title }}</h1>
+                <p class="lead text-muted">In this example we are hitting our random joke web service located at: https://people.rit.edu/~acjvks/330/spring-2018/php-web-services/get-a-joke.php.</p>
+                <p class="text-muted">Because we are using the Fetch API, we can download ordinary JSON, rather than JSON-P.</p>
+                <p class="text-muted">But to do this with Fetch, we needed to first handle the CORS issue by setting the <code>Access-Control-Allow-Origin</code> header on banjo.</p>
+            </div>			
+            
+            <div class="container">
+                <div class="row search-row">
+                    <div class="col-md-12">
+                        <input class="form-control" placeholder="This input does nothing for now">
+                        <button class="btn btn-outline-success" type="submit" v-on:click="getCoinData">Search</button>
+                    </div>
+                </div> <!-- end row -->
+                
+                <div class="row">
+                    <div class="col-md-3">
+                        <p>{{ result.q }}</p>
+                    </div>
+                    <div class="col-md-3">
+                        <p>{{ result.q }}</p>
+                    </div>
+                    <div class="col-md-3">
+                        <p>{{ result.q }}</p>
+                    </div>
+                </div> <!-- end row -->
+            </div> <!-- end container -->	
+        </div> <!-- end #app -->
+        
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script>
+        var myKey = config.DA_KEY;
+        const app = new Vue({
+            el: '#app',
+            data: {
+                title: "Crypto Currency",
+                result: 
+                    {            
+                    }
+                },
+            //created() { 
+            //    this.search()
+            //},
+            methods:{
+            getCoinData(){
+                var url =  'https://cors-anywhere.herokuapp.com/https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest';
+                //if (! this.term.trim()) return;
+                fetch(url, {method: 'GET', 
+                            qs: {
+                                'start': '1',
+                                'limit': '100',
+                                'convert': 'USD'
+                                },
+                            headers: {'X-CMC_PRO_API_KEY': myKey}
+ 
+                })
+                .then(response => {
+                    if(!response.ok)
+                    {
+                        console.log('Shit');
+                        console.log(response.statusText);
+                        throw Error(`ERROR: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(json => {	
+                    console.log(json);
+                    this.result = json.data;
+                })
+               } // end search
+            } // end methods
+        });
+        
+        </script>
+        </body>
+        </html>
+       
