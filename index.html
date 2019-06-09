@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
-    <title>Random Joke Getter!</title>
+    <title>Dollas!</title>
     <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.min.css" />
     <link type="text/css" rel="stylesheet" href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css" />
     <script type='text/javascript' src='config.js'></script>
@@ -33,16 +33,20 @@
             <div class="myheader">
                 <h1 class="display-5">{{ title }}</h1>
                 <p class="lead text-muted">Welcome to the cryptocurrencies listing.</p>
-                <p class="text-muted">Because we are using the Fetch API, we can download ordinary JSON, rather than JSON-P.</p>
-                <p class="text-muted">But to do this with Fetch, we needed to first handle the CORS issue by setting the <code>Access-Control-Allow-Origin</code> header on banjo.</p>
+                
             </div>			
             
             <div class="container">
                 <div class="row search-row">
-                    <div class="col-md-12">
+                    <div class="col-md-10">
                         <input class="form-control" placeholder="This input does nothing for now">
                         <button class="btn btn-outline-success" type="submit" v-on:click="getCoinData">Search</button>
                     </div>
+                    <div class="col-md-2">
+
+                                    <span class="badge badge-info" v-model="count">{{count}}</span>
+                    </div>
+                        </div>
                 </div> <!-- end row -->
                 
                 <div class="row">
@@ -77,10 +81,9 @@
             el: '#app',
             data: {
                 title: "Crypto Currency",
-                result: 
-                    {            
-                    },
-                limit: 10
+                result:{},
+                limit: 10,
+                count: 0
                 },
             filters: {
                 moment: function (date) {
@@ -94,18 +97,23 @@
                 this.getCoinData()
             },
             methods:{
+            getCount(){
+                this.count = this.result.length;
+            },
             getCoinData(){
                 var url =  'https://cors-anywhere.herokuapp.com/https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest';
                 //if (! this.term.trim()) return;
-                fetch(url, {method: 'GET', 
-                            qs: {
+                fetch   (  
+                        url, {
+                        method: 'GET', 
+                        qs: {
                                 'start': '1',
                                 'limit': '10',
                                 'convert': 'USD'
                                 },
-                            headers: {'X-CMC_PRO_API_KEY': myKey}
+                        headers: {'X-CMC_PRO_API_KEY': myKey}
  
-                })
+                    })
                 .then(response => {
                     if(!response.ok)
                     {
@@ -116,11 +124,11 @@
                 .then(json => {	
                     console.log(json);
                     this.result = json.data;
+                    getCount();
                 })
                } // end search
             } // end methods
-        });
-        
+        });       
         </script>
         </body>
         </html>
