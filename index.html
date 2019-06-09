@@ -34,6 +34,7 @@
             <div class="myheader">
                 <h1 class="display-5">{{ title }}</h1>
                 <p class="lead text-muted">Welcome to the cryptocurrencies listing.</p>
+                <p class="text-muted">This website shows a lisiting of prices for all cryptocurrencies types available on the market today. This site uses the CoinMarketCap api. For more information, check out <a src="https://coinmarketcap.com">CoinMarketCap's website. They are pretty awesome.</a></p>
                 
             </div>			
             
@@ -45,12 +46,14 @@
                     </div>
                     <div class="col-md-2">
                             <b-dropdown text="Number of Items">
+                            <input v-model="limit" @change="setLimit">
                               <b-dropdown-item value="10">10</b-dropdown-item>
                               <b-dropdown-item value="20">20</b-dropdown-item>
                               <b-dropdown-item value="30">30</b-dropdown-item>
                               <b-dropdown-item value="40">40</b-dropdown-item>
                             </b-dropdown>
-                </div> 
+                        </input>
+                    </div> 
             </div><!-- end row -->
                 <div class="row">
                     <div class="col-md-12" >
@@ -86,7 +89,7 @@
             {
                 title: "Crypto Currency",
                 result:{},
-                limit: 10,
+                limit: null,
                 count: 0
             },
             filters: 
@@ -116,15 +119,15 @@
                     var url =  'https://cors-anywhere.herokuapp.com/https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest';
                     //if (! this.term.trim()) return;
                     fetch   (  
-                        url, {
-                        method: 'GET', 
-                        qs: {
+                        url, 
+                        {
+                            method: 'GET', 
+                            qs: {
                                 'start': '1',
                                 'limit': this.limit,
                                 'convert': 'USD'
                                 },
-                        headers: {'X-CMC_PRO_API_KEY': myKey}
- 
+                            headers: {'X-CMC_PRO_API_KEY': myKey}
                     })
                 .then(response => {
                     if(!response.ok)
