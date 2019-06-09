@@ -9,6 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/vue@latest/dist/vue.min.js"></script>
     <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
+    <script>src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/locale/af.js"</script>
 	<style>
 		/* .myheader grabbed from Bootstrap's jumbotron example - https://getbootstrap.com/docs/4.0/examples/jumbotron/ */
 		.myheader{
@@ -31,7 +32,7 @@
         <div id="app">
             <div class="myheader">
                 <h1 class="display-5">{{ title }}</h1>
-                <p class="lead text-muted">In this example we are hitting our random joke web service located at: https://people.rit.edu/~acjvks/330/spring-2018/php-web-services/get-a-joke.php.</p>
+                <p class="lead text-muted">Welcome to the cryptocurrencies listing.</p>
                 <p class="text-muted">Because we are using the Fetch API, we can download ordinary JSON, rather than JSON-P.</p>
                 <p class="text-muted">But to do this with Fetch, we needed to first handle the CORS issue by setting the <code>Access-Control-Allow-Origin</code> header on banjo.</p>
             </div>			
@@ -45,14 +46,25 @@
                 </div> <!-- end row -->
                 
                 <div class="row">
-                    <div class="col-md-3">
-                        <p>{{ result.q }}</p>
-                    </div>
-                    <div class="col-md-3">
-                        <p>{{ result.q }}</p>
-                    </div>
-                    <div class="col-md-3">
-                        <p>{{ result.q }}</p>
+                    <div class="col-md-12" >
+                        <table class="table table-striped table-sm">
+                                <thead>
+                                        <tr>
+                                          <th scope="col">BitCoin Name</th>
+                                          <th scope="col">Symbol</th>
+                                          <th scope="col">Date Last Updated</th>
+                                          <th scope="col">Price (USD)</th>
+                                        </tr>
+                                </thead>
+                                <tbody>
+                                        <tr v-for="coin in result">
+                                          <th scope="row">{{ coin.name }}</th>
+                                          <td>{{ coin.symbol }}</td>
+                                          <td>{{ coin.last_updated}}</td>
+                                          <td>${{ coin.quote.USD.price |  dollars }}</td>
+                                        </tr>
+                                </tbody>
+                        </table>
                     </div>
                 </div> <!-- end row -->
             </div> <!-- end container -->	
@@ -67,11 +79,20 @@
                 title: "Crypto Currency",
                 result: 
                     {            
-                    }
+                    },
+                limit: 10
                 },
-            //created() { 
-            //    this.search()
-            //},
+            filters: {
+                moment: function (date) {
+                    return moment(date).format('MMMM Do YYYY');
+                },
+                dollars: function(price){
+                    return price.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'); ;
+                }
+            },
+            created() { 
+                this.getCoinData()
+            },
             methods:{
             getCoinData(){
                 var url =  'https://cors-anywhere.herokuapp.com/https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest';
@@ -79,7 +100,7 @@
                 fetch(url, {method: 'GET', 
                             qs: {
                                 'start': '1',
-                                'limit': '100',
+                                'limit': '10',
                                 'convert': 'USD'
                                 },
                             headers: {'X-CMC_PRO_API_KEY': myKey}
@@ -88,8 +109,6 @@
                 .then(response => {
                     if(!response.ok)
                     {
-                        console.log('Shit');
-                        console.log(response.statusText);
                         throw Error(`ERROR: ${response.statusText}`);
                     }
                     return response.json();
