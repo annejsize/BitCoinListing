@@ -41,8 +41,8 @@
             <div class="container">
                 <div class="row search-row">
                     <div class="col-md-10">
-                        <input class="form-control" placeholder="This input does nothing for now">
-                        <button class="btn btn-outline-success" type="submit" v-on:click="getCoinData">Search</button>
+                        <input class="form-control" placeholder="Enter name of coin" v-model.trim="search">
+                        <!-- <button class="btn btn-outline-success" type="submit" v-on:click="getCoinData">Search</button> -->
                     </div>
                     <div class="col-md-2">
                             <b-dropdown text="Number of Items">
@@ -67,7 +67,7 @@
                                         </tr>
                                 </thead>
                                 <tbody>
-                                        <tr v-for="coin in result">
+                                        <tr v-for="coin in filteredResults">
                                           <th scope="row">{{ coin.name }}</th>
                                           <td>{{ coin.symbol }}</td>
                                           <td>{{ coin.last_updated }}</td>
@@ -88,9 +88,10 @@
             data: 
             {
                 title: "Crypto Currency",
-                result:{},
+                results:[],
                 limit: null,
-                count: 0
+                count: 0, 
+                search: ' '
             },
             filters: 
             {
@@ -107,9 +108,17 @@
             computed: 
             {
                 addCount: function() {
-                return this.result.length;
+                    return this.results.length;
                 },
-            },
+                filteredResults: function() {
+                    if (!this.search || this.search==" ") {
+                        return this.results;
+                    } 
+                    else {
+                        return this.results.filter((coin)=>{return coin.name.startsWith(this.search)});
+                    }                  
+                }
+            },   
             methods:
             {
                 setLimit(limit) {
@@ -127,7 +136,8 @@
                                 'limit': this.limit,
                                 'convert': 'USD'
                                 },
-                            headers: {'X-CMC_PRO_API_KEY': myKey}
+                            headers: {'X-CMC_PRO_API_KEY': myKey},
+                            search: ''
                     })
                 .then(response => {
                     if(!response.ok)
@@ -138,7 +148,7 @@
                 })
                 .then(json => {	
                     console.log(json);
-                    this.result = json.data;
+                    this.results = json.data;
                 })
                }
             } // end methods
