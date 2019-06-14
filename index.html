@@ -67,7 +67,7 @@
                                         </tr>
                                 </thead>
                                 <tbody>
-                                        <tr v-for="coin in filteredResults">
+                                        <tr v-for="coin in results">
                                           <th scope="row">{{ coin.name }}</th>
                                           <td>{{ coin.symbol }}</td>
                                           <td>{{ coin.last_updated }}</td>
@@ -118,10 +118,11 @@
             },
             filteredResults: function() {
                     if (!this.search || this.search==" ") {
-                        return this.results;
+                        this.results = this.fullResults;
                     } 
                     else {
-                        return this.results.filter((coin)=>{return coin.name.startsWith(this.search)});
+                        this.fullResults = this.results;
+                        this.results = this.results.filter((coin)=>{return coin.name.startsWith(this.search)});
                     }                  
                 },
                 getCoinData(){
