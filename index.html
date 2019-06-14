@@ -42,7 +42,7 @@
                 <div class="row search-row">
                     <div class="col-md-10">
                         <input class="form-control" placeholder="Enter name of coin" v-model.trim="search">
-                        <!-- <button class="btn btn-outline-success" type="submit" v-on:click="getCoinData">Search</button> -->
+                        <button class="btn btn-outline-success" type="submit" v-on:click="filteredResults">Search</button> 
                     </div>
                     <div class="col-md-2">
                             <b-dropdown text="Number of Items">
@@ -109,14 +109,6 @@
             {
                 addCount: function() {
                     return this.results.length;
-                },
-                filteredResults: function() {
-                    if (!this.search || this.search==" ") {
-                        return this.results;
-                    } 
-                    else {
-                        return this.results.filter((coin)=>{return coin.name.startsWith(this.search)});
-                    }                  
                 }
             },   
             methods:
@@ -124,6 +116,14 @@
                 setLimit(limit) {
                     return this.limit = limit;
             },
+            filteredResults: function() {
+                    if (!this.search || this.search==" ") {
+                        return this.results;
+                    } 
+                    else {
+                        return this.results.filter((coin)=>{return coin.name.startsWith(this.search)});
+                    }                  
+                },
                 getCoinData(){
                     var url =  'https://cors-anywhere.herokuapp.com/https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest';
                     //if (! this.term.trim()) return;
